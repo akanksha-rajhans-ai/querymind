@@ -1,6 +1,3 @@
-Yes. Replace your current `README.md` with this improved version:
-
-```markdown
 # QueryMind
 
 QueryMind is a schema-aware text-to-SQL MVP that turns plain English analytics questions into executable SQL, explains which database tables were used for grounding, and runs the query against a local SQLite demo database.
@@ -39,7 +36,7 @@ The MVP started with deterministic SQL templates so the full system could run lo
 
 ## Architecture
 
-```text
+
 User question
     ↓
 Schema introspection
@@ -246,4 +243,3 @@ This can help QueryMind explain why it selected a join path and can later improv
 ## GitHub Topics
 
 `nlp` `text-to-sql` `llm` `rag` `sqlite` `gemini` `ai-engineering` `sql`
-```
