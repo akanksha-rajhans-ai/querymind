@@ -1,0 +1,5 @@
+# Runtime MVP has no third-party dependencies.
+# Optional future API stack:
+# fastapi>=0.115.0
+# uvicorn>=0.30.0
+

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "monthly_revenue",
+    "question": "Show monthly revenue for completed orders",
+    "expected_sql_contains": ["strftime", "orders", "order_items", "completed", "GROUP BY"],
+    "expected_columns": ["month", "revenue"]
+  },
+  {
+    "id": "top_customers",
+    "question": "Who are the top 5 customers by spend?",
+    "expected_sql_contains": ["customers", "order_items", "SUM", "ORDER BY"],
+    "expected_columns": ["customer", "total_spend"]
+  },
+  {
+    "id": "category_revenue",
+    "question": "Which product categories generated the most revenue?",
+    "expected_sql_contains": ["products", "category", "order_items", "SUM"],
+    "expected_columns": ["category", "revenue"]
+  },
+  {
+    "id": "orders_by_status",
+    "question": "How many orders do we have by status?",
+    "expected_sql_contains": ["orders", "status", "COUNT", "GROUP BY"],
+    "expected_columns": ["status", "order_count"]
+  },
+  {
+    "id": "in_transit_shipments",
+    "question": "Which shipments are still in transit?",
+    "expected_sql_contains": ["shipments", "delivered_at IS NULL"],
+    "expected_columns": ["order_id", "carrier", "shipment_status"]
+  },
+  {
+    "id": "seattle_customers",
+    "question": "List customers in Seattle",
+    "expected_sql_contains": ["customers", "Seattle"],
+    "expected_columns": ["customer", "email", "city"]
+  }
+]
+

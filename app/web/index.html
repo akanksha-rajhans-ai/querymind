@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QueryMind</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Text-to-SQL MVP</p>
+          <h1>QueryMind</h1>
+        </div>
+        <div class="status" id="status">Local SQLite demo</div>
+      </header>
+
+      <main class="workspace">
+        <section class="query-pane" aria-label="Query workspace">
+          <div class="composer">
+            <label for="question">Ask a data question</label>
+            <textarea id="question" rows="4">Show monthly revenue for completed orders</textarea>
+            <div class="actions">
+              <button id="runButton" type="button">Run query</button>
+              <button id="clearButton" class="secondary" type="button">Clear</button>
+            </div>
+          </div>
+
+          <div class="examples" id="examples"></div>
+
+          <div class="result-grid">
+            <section class="panel sql-panel" aria-label="Generated SQL">
+              <div class="panel-heading">
+                <h2>Generated SQL</h2>
+                <span id="confidence"></span>
+              </div>
+              <pre id="sqlOutput">Waiting for a question.</pre>
+            </section>
+
+            <section class="panel" aria-label="Grounding">
+              <div class="panel-heading">
+                <h2>Schema Grounding</h2>
+              </div>
+              <div id="grounding" class="grounding"></div>
+            </section>
+          </div>
+
+          <section class="panel table-panel" aria-label="Query results">
+            <div class="panel-heading">
+              <h2>Results</h2>
+              <span id="latency"></span>
+            </div>
+            <div class="table-wrap" id="resultTable"></div>
+          </section>
+        </section>
+
+        <aside class="schema-pane" aria-label="Database schema">
+          <div class="panel-heading">
+            <h2>Demo Schema</h2>
+            <span id="tableCount"></span>
+          </div>
+          <div id="schemaList" class="schema-list"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+

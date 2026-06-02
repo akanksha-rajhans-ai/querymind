@@ -1,0 +1,16 @@
+[project]
+name = "querymind"
+version = "0.1.0"
+description = "A schema-aware natural language to SQL MVP with local SQLite demo data."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Akanksha Rajhans" }]
+dependencies = []
+
+[project.optional-dependencies]
+api = ["fastapi>=0.115.0", "uvicorn>=0.30.0"]
+dev = ["pytest>=8.0.0"]
+
+[tool.querymind]
+demo_db_path = "data/querymind_demo.sqlite"
+

@@ -1,0 +1,2 @@
+"""QueryMind application package."""
+
