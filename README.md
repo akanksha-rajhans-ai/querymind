@@ -1,3 +1,6 @@
+Here’s the updated `README.md` with the context-engineering roadmap added and the Architecture code block fixed:
+
+```markdown
 # QueryMind
 
 QueryMind is a schema-aware text-to-SQL MVP that turns plain English analytics questions into executable SQL, explains which database tables were used for grounding, and runs the query against a local SQLite demo database.
@@ -36,7 +39,7 @@ The MVP started with deterministic SQL templates so the full system could run lo
 
 ## Architecture
 
-
+```text
 User question
     ↓
 Schema introspection
@@ -150,6 +153,42 @@ order_items(order_item_id, order_id, product_id, quantity, unit_price_cents)
 
 This makes the generated SQL more likely to match the real database.
 
+## Context Engineering Direction
+
+QueryMind is also evolving toward a context-engineered text-to-SQL agent.
+
+In document RAG, context usually means retrieved documents. In QueryMind, context means:
+
+```text
+database schema
+table names
+column names
+foreign keys
+join paths
+sample values
+query history
+execution errors
+business definitions
+```
+
+The current MVP retrieves relevant tables before generating SQL. A stronger future version will let the system dynamically navigate context before answering.
+
+For example:
+
+```text
+Question: Which customers had delayed shipments after high-value orders?
+
+Context steps:
+1. Inspect customer-related tables.
+2. Find join path: customers → orders → shipments.
+3. Check whether order value requires order_items.
+4. Inspect shipment date/status columns.
+5. Generate SQL.
+6. Execute and repair if needed.
+```
+
+This moves QueryMind from static schema retrieval toward a context-aware SQL agent.
+
 ## Evaluation
 
 Current MVP eval: `6/6` smoke cases passing locally.
@@ -217,6 +256,9 @@ querymind/
 - Add embedding-based schema retrieval for larger schemas
 - Add schema graph view where tables are nodes and foreign keys are edges
 - Use schema graph paths to improve join selection for generated SQL
+- Add context engineering layer for dynamic schema, join-path, sample-value, and execution-error navigation
+- Store successful query patterns and failed-query repairs so context improves with usage
+- Add automatic schema refresh so table and column context stays up to date
 - Add PostgreSQL connector
 - Add SQL repair loop with execution feedback
 - Add benchmark-style evals and execution equivalence scoring
