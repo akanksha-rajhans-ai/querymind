@@ -66,6 +66,8 @@ class SQLCandidate:
     rationale: str
     retrieved_tables: List[RetrievedTable]
     confidence: float
+    source: str
+    fallback_reason: str = ""
 
 
 @dataclass(frozen=True)
@@ -78,6 +80,9 @@ class QueryResult:
     rationale: str
     retrieved_tables: List[RetrievedTable]
     confidence: float
+    source: str
+    fallback_reason: str
     latency_ms: int
     error: Optional[str] = None
+
 

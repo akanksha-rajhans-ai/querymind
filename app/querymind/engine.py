@@ -61,6 +61,8 @@ class QueryMindEngine:
             rationale=candidate.rationale,
             retrieved_tables=candidate.retrieved_tables,
             confidence=candidate.confidence,
+            source=candidate.source,
+            fallback_reason=candidate.fallback_reason,
             latency_ms=elapsed,
         )
 

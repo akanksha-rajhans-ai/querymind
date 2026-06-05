@@ -10,6 +10,8 @@ const examplesEl = document.querySelector("#examples");
 const schemaList = document.querySelector("#schemaList");
 const tableCount = document.querySelector("#tableCount");
 const statusEl = document.querySelector("#status");
+const sourceBadge = document.querySelector("#sourceBadge");
+
 
 function escapeHtml(value) {
   return String(value)
@@ -30,6 +32,7 @@ async function fetchJson(url, options = {}) {
 }
 
 async function runQuery() {
+  sourceBadge.textContent = "";
   const question = questionEl.value.trim();
   if (!question) {
     questionEl.focus();
@@ -63,8 +66,11 @@ async function runQuery() {
 }
 
 function renderResult(result) {
-  sqlOutput.textContent = result.sql;
+  sqlOutput.textContent = result.fallback_reason
+  ? `${result.sql}\n\n-- ${result.fallback_reason}`
+  : result.sql;
   confidence.textContent = `${Math.round(result.confidence * 100)}% confidence`;
+  sourceBadge.textContent = result.source === "gemini" ? "Source: Gemini" : "Source: Local fallback";
   latency.textContent = `${result.row_count} rows in ${result.latency_ms} ms`;
   grounding.innerHTML = result.retrieved_tables.length
     ? result.retrieved_tables

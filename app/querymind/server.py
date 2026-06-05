@@ -51,6 +51,8 @@ class QueryMindHandler(BaseHTTPRequestHandler):
                     "row_count": result.row_count,
                     "rationale": result.rationale,
                     "confidence": result.confidence,
+                    "source": result.source,
+                    "fallback_reason": result.fallback_reason,
                     "latency_ms": result.latency_ms,
                     "retrieved_tables": [
                         {

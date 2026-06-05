@@ -12,14 +12,11 @@ import re
 from typing import List
 
 from app.querymind.guardrails import validate_read_only_sql
-from app.querymind.models import SQLCandidate, SchemaContext
-from app.querymind.schema_index import SchemaIndex, tokenize
-
-from app.querymind.guardrails import validate_read_only_sql
 from app.querymind.llm_provider import GeminiTextToSQLProvider
 from app.querymind.models import SQLCandidate, SchemaContext
 from app.querymind.prompt_builder import build_sql_prompt
 from app.querymind.schema_index import SchemaIndex, tokenize
+
 
 
 
@@ -32,11 +29,9 @@ class TextToSQLTranslator:
 
     def generate(self, question: str) -> SQLCandidate:
         retrieved = self.index.retrieve(question)
+        fallback_reason = ""
 
         use_llm = os.getenv("QUERYMIND_USE_LLM", "false").lower() == "true"
-
-        print("USE_LLM:", use_llm)
-        print("GEMINI_CONFIGURED:", self.llm_provider.is_configured())
 
         if use_llm and self.llm_provider.is_configured():
             prompt = build_sql_prompt(question, self.schema, retrieved)
@@ -51,10 +46,12 @@ class TextToSQLTranslator:
                     rationale="Generated SQL with Gemini using retrieved schema context.",
                     retrieved_tables=retrieved,
                     confidence=0.78,
+                    source="gemini",
+                    fallback_reason="",
                 )
             except Exception as exc:
+                fallback_reason = f"Gemini unavailable, used local fallback. Error: {exc}"
                 print(f"Gemini generation failed: {exc}")
-                fallback_reason = f"Gemini unavailable, used template fallback. Error: {exc}"
 
         sql, rationale, confidence = self._template_sql(question)
         if not sql:
@@ -69,6 +66,8 @@ class TextToSQLTranslator:
             rationale=rationale,
             retrieved_tables=retrieved,
             confidence=confidence,
+            source="local_fallback",
+            fallback_reason=fallback_reason,
         )
 
     def _template_sql(self, question: str) -> tuple[str, str, float]:

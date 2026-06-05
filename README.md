@@ -1,6 +1,3 @@
-Here’s the updated `README.md` with the context-engineering roadmap added and the Architecture code block fixed:
-
-```markdown
 # QueryMind
 
 QueryMind is a schema-aware text-to-SQL MVP that turns plain English analytics questions into executable SQL, explains which database tables were used for grounding, and runs the query against a local SQLite demo database.
