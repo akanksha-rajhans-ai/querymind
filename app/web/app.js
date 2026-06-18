@@ -11,6 +11,7 @@ const schemaList = document.querySelector("#schemaList");
 const tableCount = document.querySelector("#tableCount");
 const statusEl = document.querySelector("#status");
 const sourceBadge = document.querySelector("#sourceBadge");
+const repairBadge = document.querySelector("#repairBadge");
 
 
 function escapeHtml(value) {
@@ -32,6 +33,7 @@ async function fetchJson(url, options = {}) {
 }
 
 async function runQuery() {
+  repairBadge.textContent = "";
   sourceBadge.textContent = "";
   const question = questionEl.value.trim();
   if (!question) {
@@ -66,11 +68,22 @@ async function runQuery() {
 }
 
 function renderResult(result) {
+  if (result.repair_attempted && result.repair_succeeded) {
+  sqlOutput.textContent = `-- Original SQL failed:\n${result.original_sql}\n\n-- SQLite error:\n${result.repair_error}\n\n-- Repaired SQL:\n${result.sql}`;
+} else {
   sqlOutput.textContent = result.fallback_reason
-  ? `${result.sql}\n\n-- ${result.fallback_reason}`
-  : result.sql;
+    ? `${result.sql}\n\n-- ${result.fallback_reason}`
+    : result.sql;
+}
   confidence.textContent = `${Math.round(result.confidence * 100)}% confidence`;
   sourceBadge.textContent = result.source === "gemini" ? "Source: Gemini" : "Source: Local fallback";
+  if (result.repair_attempted && result.repair_succeeded) {
+    repairBadge.textContent = "Repair: succeeded";
+  } else if (result.repair_attempted) {
+    repairBadge.textContent = "Repair: failed";
+  } else {
+    repairBadge.textContent = "Repair: not needed";
+  }
   latency.textContent = `${result.row_count} rows in ${result.latency_ms} ms`;
   grounding.innerHTML = result.retrieved_tables.length
     ? result.retrieved_tables

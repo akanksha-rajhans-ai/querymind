@@ -56,6 +56,9 @@ class GeminiTextToSQLProvider:
 
         return self._clean_sql(self._extract_text(data))
 
+    def repair_sql(self, prompt: str) -> str:
+        return self.generate_sql(prompt)
+
     @staticmethod
     def _extract_text(data: dict) -> str:
         candidates = data.get("candidates", [])

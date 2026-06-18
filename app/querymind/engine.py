@@ -12,6 +12,7 @@ from app.querymind.guardrails import normalize_sql, validate_read_only_sql
 from app.querymind.introspection import SQLiteIntrospector
 from app.querymind.models import QueryResult, SchemaContext
 from app.querymind.translator import TextToSQLTranslator
+from app.querymind.prompt_builder import build_repair_prompt
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,8 +51,41 @@ class QueryMindEngine:
         if not ok:
             raise ValueError(message)
 
-        columns, rows = self._execute(sql, max_rows=max_rows)
+        repair_attempted = False
+        repair_succeeded = False
+        original_sql = ""
+        repair_error = ""
+
+        try:
+            columns, rows = self._execute(sql, max_rows=max_rows)
+        except sqlite3.Error as exc:
+            if candidate.source != "gemini":
+                raise
+
+            repair_attempted = True
+            original_sql = sql
+            repair_error = str(exc)
+
+            repair_prompt = build_repair_prompt(
+                question=cleaned_question,
+                failed_sql=sql,
+                error_message=repair_error,
+                schema=self.schema,
+                retrieved_tables=candidate.retrieved_tables,
+            )
+
+            repaired_sql = self.translator.llm_provider.repair_sql(repair_prompt)
+
+            ok, message = validate_read_only_sql(repaired_sql)
+            if not ok:
+                raise ValueError(f"Repaired SQL failed guardrails: {message}")
+
+            sql = normalize_sql(repaired_sql)
+            columns, rows = self._execute(sql, max_rows=max_rows)
+            repair_succeeded = True
+
         elapsed = int((time.perf_counter() - started) * 1000)
+
         return QueryResult(
             question=cleaned_question,
             sql=sql,
@@ -64,6 +98,10 @@ class QueryMindEngine:
             source=candidate.source,
             fallback_reason=candidate.fallback_reason,
             latency_ms=elapsed,
+            repair_attempted=repair_attempted,
+            repair_succeeded=repair_succeeded,
+            original_sql=original_sql,
+            repair_error=repair_error,
         )
 
     def schema_summary(self) -> Dict[str, Any]:

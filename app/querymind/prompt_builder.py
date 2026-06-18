@@ -45,3 +45,52 @@ Schema:
 User question:
 {question}
 """.strip()
+
+def build_repair_prompt(
+    question: str,
+    failed_sql: str,
+    error_message: str,
+    schema: SchemaContext,
+    retrieved_tables: list[RetrievedTable],
+) -> str:
+    selected_table_names = {item.table for item in retrieved_tables}
+
+    if selected_table_names:
+        tables = [
+            table
+            for name, table in schema.tables.items()
+            if name in selected_table_names
+        ]
+    else:
+        tables = list(schema.tables.values())
+
+    schema_text = "\n".join(table.prompt_fragment() for table in tables)
+
+    return f"""
+You are QueryMind, a SQLite text-to-SQL repair engine.
+
+The previous SQL failed during execution.
+
+Repair the SQL so it correctly answers the original user question.
+
+Rules:
+- Return SQL only.
+- Do not wrap the SQL in markdown.
+- Only generate one SELECT statement.
+- Never generate INSERT, UPDATE, DELETE, DROP, ALTER, CREATE, PRAGMA, or VACUUM.
+- Use only the tables and columns shown in the schema.
+- Preserve the user's filters and intent.
+- Prefer explicit JOINs using foreign keys.
+
+Schema:
+{schema_text}
+
+Original user question:
+{question}
+
+Failed SQL:
+{failed_sql}
+
+SQLite error:
+{error_message}
+""".strip()

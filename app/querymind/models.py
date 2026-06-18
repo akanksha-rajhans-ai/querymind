@@ -83,6 +83,10 @@ class QueryResult:
     source: str
     fallback_reason: str
     latency_ms: int
+    repair_attempted: bool = False
+    repair_succeeded: bool = False
+    original_sql: str = ""
+    repair_error: str = ""
     error: Optional[str] = None
 
 

@@ -53,6 +53,10 @@ class QueryMindHandler(BaseHTTPRequestHandler):
                     "confidence": result.confidence,
                     "source": result.source,
                     "fallback_reason": result.fallback_reason,
+                    "repair_attempted": result.repair_attempted,
+                    "repair_succeeded": result.repair_succeeded,
+                    "original_sql": result.original_sql,
+                    "repair_error": result.repair_error,
                     "latency_ms": result.latency_ms,
                     "retrieved_tables": [
                         {
