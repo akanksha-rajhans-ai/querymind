@@ -33,6 +33,7 @@ The MVP started with deterministic SQL templates so the full system could run lo
 - Read-only SQL guardrails before execution
 - Browser UI showing generated SQL, schema grounding, confidence, latency, and result rows
 - Evaluation harness with smoke tests for generated SQL behavior
+- SQL repair-loop metadata and deterministic repair test coverage
 
 ## Architecture
 
